@@ -1,24 +1,7 @@
-# README
+# RuKIA-AI
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+_a Ruby on Rails know-it-all AI application_
 
-Things you may want to cover:
+This personal project aims to create a model-agnostic RAG System (retrieval-augmented generation system) and enhance AI model capabilities by integrating retrieval mechanisms that provide context and improve the quality of generated responses.
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+ 
