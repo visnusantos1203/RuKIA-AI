@@ -5,10 +5,16 @@ class RagService
   DEFAULT_MAX_CONTEXT_DOCS = 3
   DEFAULT_SIMILARITY_METRIC = "cosine"
 
-  def initialize(model: DEFAULT_MODEL, client: Llm::OpenAI::Client.new, embedding_model: DEFAULT_EMBEDDING_MODEL)
-    @model = model
+  def initialize(
+    client: Llm::OpenAI::Client.new,
+    embedding_model: DEFAULT_EMBEDDING_MODEL,
+    model: DEFAULT_MODEL,
+    persona: AiAssistant::Personas::Professional.new
+  )
     @client = client
     @embedding_model = embedding_model
+    @model = model
+    @persona = persona
   end
 
   def query(user_question, max_context_docs: DEFAULT_MAX_CONTEXT_DOCS)
@@ -78,10 +84,12 @@ class RagService
 
   # Generate response using LLM
   def generate_response(question, documents)
+    persona_prompt = @persona.system_prompt
+
     return "No relevant information found." if documents.empty?
 
     context = build_context(documents)
-    prompt = build_prompt(context, question)
+    prompt = build_prompt(persona_prompt, context, question)
 
     @client.query(@model, prompt)
   rescue StandardError => e
@@ -97,10 +105,14 @@ class RagService
   end
 
   # Build prompt with context and question
-  def build_prompt(context, question)
+  def build_prompt(persona_prompt, context, question)
     <<~PROMPT
-      You are a helpful assistant. Use the following context to answer the question.
+      This is your persona: #{persona_prompt}
+
+      Use the following context to answer the question based on the given persona.
       If you cannot answer the question based on the context, say so.
+
+      Never mention the word "based on the context provided" or anything similar to this phrase in your response.
 
       Context:
       #{context}
