@@ -6,4 +6,5 @@ This personal project aims to create a model-agnostic RAG System (retrieval-augm
 
  
 ## Chat preview
-<img width="1420" alt="Screenshot 2025-02-26 at 2 27 00 PM" src="https://github.com/user-attachments/assets/7273ace7-701d-44e6-bf01-e83c93d4fa38" />
+
+<img width="839" alt="Screenshot 2025-04-02 at 3 48 27 PM" src="https://github.com/user-attachments/assets/1b58afac-126b-476e-811a-298be5e1986b" />
