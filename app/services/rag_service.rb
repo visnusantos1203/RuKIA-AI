@@ -4,39 +4,33 @@ class RagService
   DEFAULT_EMBEDDING_MODEL = "text-embedding-ada-002"
   DEFAULT_MAX_CONTEXT_DOCS = 3
   DEFAULT_SIMILARITY_METRIC = "cosine"
+  DEFAULT_PERSONA = :professional
 
   def initialize(
     client: Llm::OpenAI::Client.new,
     embedding_model: DEFAULT_EMBEDDING_MODEL,
     model: DEFAULT_MODEL,
-    persona: AiAssistant::Personas::Professional.new
+    persona: DEFAULT_PERSONA
   )
     @client = client
     @embedding_model = embedding_model
     @model = model
-    @persona = persona
+    @persona = AIAssistant::PersonaRegistry.find(persona)
   end
 
   def query(user_question, max_context_docs: DEFAULT_MAX_CONTEXT_DOCS)
-    # Generate embedding for the question
     question_embedding = generate_embedding(user_question)
-
-    # Find relevant documents
     relevant_docs = find_relevant_documents(question_embedding, max_context_docs)
-
-    # Generate response using context and question
     response = generate_response(user_question, relevant_docs)
 
-    # Format and return the result
-    {
-      question: user_question,
-      answer: response,
-      sources: relevant_docs.map(&:title)
-    }
+    build_response(user_question, response, relevant_docs)
+  rescue StandardError => e
+    handle_query_error(e)
   end
 
   def add_document(title:, content:)
-    # Create document with embedding
+    validate_document!(title, content)
+    
     embedding = generate_embedding(content)
     Document.create!(
       title: title,
@@ -44,14 +38,14 @@ class RagService
       embedding: embedding
     )
   rescue StandardError => e
-    Rails.logger.error("Failed to add document: #{e.message}")
-    raise DocumentCreationError, "Failed to add document: #{e.message}"
+    handle_document_error(e)
   end
 
   private
 
-  # Error class for document creation failures
-  class DocumentCreationError < StandardError; end
+  def validate_document!(title, content)
+    raise AIAssistant::Errors::InvalidDocumentError, "Title and content cannot be blank" if title.blank? || content.blank?
+  end
 
   def generate_embedding(text)
     response = OpenAI::Client.new(
@@ -66,11 +60,9 @@ class RagService
     )
     response.dig("data", 0, "embedding")
   rescue StandardError => e
-    Rails.logger.error("Embedding generation failed: #{e.message}")
-    raise "Failed to generate embedding: #{e.message}"
+    raise AIAssistant::Errors::EmbeddingGenerationError, "Failed to generate embedding: #{e.message}"
   end
 
-  # Find relevant documents based on embedding similarity
   def find_relevant_documents(embedding, max_docs)
     Document.nearest_neighbors(
       :embedding,
@@ -82,32 +74,26 @@ class RagService
     []
   end
 
-  # Generate response using LLM
   def generate_response(question, documents)
-    persona_prompt = @persona.system_prompt
-
     return "No relevant information found." if documents.empty?
 
     context = build_context(documents)
-    prompt = build_prompt(persona_prompt, context, question)
+    prompt = build_prompt(context, question)
 
     @client.query(@model, prompt)
   rescue StandardError => e
-    Rails.logger.error("Response generation failed: #{e.message}")
-    "Sorry, I encountered an error while generating a response."
+    raise AIAssistant::Errors::QueryProcessingError, "Failed to generate response: #{e.message}"
   end
 
-  # Build context from documents
   def build_context(documents)
     documents.map do |doc|
       "#{doc.title}:\n#{doc.content}"
     end.join("\n\n")
   end
 
-  # Build prompt with context and question
-  def build_prompt(persona_prompt, context, question)
+  def build_prompt(context, question)
     <<~PROMPT
-      This is your persona: #{persona_prompt}
+      #{@persona.system_prompt}
 
       Use the following context to answer the question based on the given persona.
       If you cannot answer the question based on the context, say so.
@@ -119,5 +105,24 @@ class RagService
 
       Question: #{question}
     PROMPT
+  end
+
+  def build_response(question, answer, sources)
+    {
+      question: question,
+      answer: answer,
+      sources: sources.map(&:title),
+      persona: @persona.name
+    }
+  end
+
+  def handle_query_error(error)
+    Rails.logger.error("Query failed: #{error.message}")
+    raise AIAssistant::Errors::QueryError, "Failed to process query: #{error.message}"
+  end
+
+  def handle_document_error(error)
+    Rails.logger.error("Failed to add document: #{error.message}")
+    raise AIAssistant::Errors::DocumentCreationError, "Failed to add document: #{error.message}"
   end
 end
