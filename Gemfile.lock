@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    Ascii85 (2.0.1)
     actioncable (7.2.2.1)
       actionpack (= 7.2.2.1)
       activesupport (= 7.2.2.1)
@@ -74,6 +75,7 @@ GEM
       tzinfo (~> 2.0, >= 2.0.5)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
+    afm (0.2.2)
     ast (2.4.2)
     base64 (0.2.0)
     benchmark (0.4.0)
@@ -84,6 +86,7 @@ GEM
     brakeman (7.0.0)
       racc
     builder (3.3.0)
+    byebug (12.0.0)
     capybara (3.40.0)
       addressable
       matrix
@@ -101,6 +104,9 @@ GEM
       irb (~> 1.10)
       reline (>= 0.3.8)
     diff-lcs (1.6.0)
+    docx (0.8.0)
+      nokogiri (~> 1.13, >= 1.13.0)
+      rubyzip (~> 2.0)
     dotenv (3.1.7)
     dotenv-rails (3.1.7)
       dotenv (= 3.1.7)
@@ -124,6 +130,7 @@ GEM
       net-http (>= 0.5.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    hashery (2.1.2)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     importmap-rails (2.1.0)
@@ -153,7 +160,6 @@ GEM
     marcel (1.0.4)
     matrix (0.4.2)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.8)
     minitest (5.25.4)
     msgpack (1.8.0)
     multipart-post (2.4.1)
@@ -171,17 +177,24 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.4)
-    nokogiri (1.18.3)
-      mini_portile2 (~> 2.8.2)
+    nokogiri (1.18.3-aarch64-linux-gnu)
       racc (~> 1.4)
     nokogiri (1.18.3-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.18.3-x86_64-darwin)
       racc (~> 1.4)
+    nokogiri (1.18.3-x86_64-linux-gnu)
+      racc (~> 1.4)
     parallel (1.26.3)
     parser (3.3.7.1)
       ast (~> 2.4.1)
       racc
+    pdf-reader (2.14.1)
+      Ascii85 (>= 1.0, < 3.0, != 2.0.0)
+      afm (~> 0.2.1)
+      hashery (~> 2.0)
+      ruby-rc4
+      ttfunk
     pg (1.5.9)
     pgvector (0.3.2)
     pp (0.6.2)
@@ -235,6 +248,9 @@ GEM
     rake (13.2.1)
     rdoc (6.12.0)
       psych (>= 4.0.0)
+    redis (4.8.1)
+    redis-client (0.24.0)
+      connection_pool
     regexp_parser (2.10.0)
     reline (0.6.0)
       io-console (~> 0.5)
@@ -293,6 +309,7 @@ GEM
       faraday (>= 1)
       faraday-multipart (>= 1)
     ruby-progressbar (1.13.0)
+    ruby-rc4 (0.1.5)
     rubyzip (2.4.1)
     securerandom (0.4.1)
     selenium-webdriver (4.29.1)
@@ -301,6 +318,12 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    sidekiq (7.3.9)
+      base64
+      connection_pool (>= 2.3.0)
+      logger
+      rack (>= 2.2.4)
+      redis-client (>= 0.22.2)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -317,6 +340,8 @@ GEM
     tiktoken_ruby (0.0.9-x86_64-darwin)
     tiktoken_ruby (0.0.9-x86_64-linux)
     timeout (0.4.3)
+    ttfunk (1.8.0)
+      bigdecimal (~> 3.1)
     turbo-rails (2.0.11)
       actionpack (>= 6.0.0)
       railties (>= 6.0.0)
@@ -350,22 +375,27 @@ PLATFORMS
 DEPENDENCIES
   bootsnap
   brakeman
+  byebug (~> 12.0)
   capybara
   debug
+  docx (~> 0.8.0)
   dotenv-rails
   error_highlight (>= 0.4.0)
   factory_bot_rails
   importmap-rails
   jbuilder
   neighbor
+  pdf-reader (~> 2.14, >= 2.14.1)
   pg (~> 1.1)
   pgvector
   puma (>= 5.0)
   rails (~> 7.2.2, >= 7.2.2.1)
+  redis (~> 4.8)
   rspec-rails (~> 7.0.0)
   rubocop-rails-omakase
   ruby-openai
   selenium-webdriver
+  sidekiq (~> 7.0)
   sprockets-rails
   stimulus-rails
   tiktoken_ruby

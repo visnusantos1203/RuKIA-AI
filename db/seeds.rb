@@ -1,5 +1,7 @@
 # Clear existing documents
+puts "Deleting all existing documents..."
 Document.destroy_all
+puts "All existing documents deleted."
 
 sample_documents = [
   {

@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  require "sidekiq/web"
+
+  mount Sidekiq::Web => "/sidekiq"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -10,9 +13,9 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   # Chat routes
-  root "chat#index"
-  post "chat", to: "chat#chat"
+  root "chats#index"
+  post "chat", to: "chats#chat"
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  # Document routes
+  resources :documents
 end

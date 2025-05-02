@@ -39,6 +39,12 @@ gem "pgvector"
 gem "neighbor"
 gem "ruby-openai"
 gem "tiktoken_ruby"
+gem 'pdf-reader', '~> 2.14', '>= 2.14.1'
+gem 'docx', '~> 0.8.0'
+
+
+gem 'sidekiq', '~> 7.0'
+gem 'redis', '~> 4.8'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -67,3 +73,5 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "byebug", "~> 12.0", :groups => [:development, :test]
