@@ -1,6 +1,7 @@
-class ChatController < ApplicationController
+# frozen_string_literal: true
 
-  skip_before_action :verify_authenticity_token, only: [:chat]
+class ChatsController < ApplicationController
+  skip_before_action :verify_authenticity_token, only: [ :chat ]
   def index
     # This will render the chat interface
   end

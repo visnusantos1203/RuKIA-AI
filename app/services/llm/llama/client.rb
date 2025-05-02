@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Llm
   module Llama
     class Client < Llm::BaseClient

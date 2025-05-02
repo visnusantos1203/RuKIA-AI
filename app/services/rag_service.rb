@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class RagService
   # Constants for default values
   DEFAULT_MODEL = "gpt-3.5-turbo"
   DEFAULT_EMBEDDING_MODEL = "text-embedding-ada-002"
-  DEFAULT_MAX_CONTEXT_DOCS = 3
+  DEFAULT_MAX_CONTEXT_DOCS = 50
   DEFAULT_SIMILARITY_METRIC = "cosine"
   DEFAULT_PERSONA = :professional
 
@@ -30,12 +32,11 @@ class RagService
 
   def add_document(title:, content:)
     validate_document!(title, content)
-    
-    embedding = generate_embedding(content)
+
     Document.create!(
       title: title,
       content: content,
-      embedding: embedding
+      embedding: generate_embedding(content)
     )
   rescue StandardError => e
     handle_document_error(e)
@@ -43,28 +44,20 @@ class RagService
 
   private
 
-  def validate_document!(title, content)
-    raise AIAssistant::Errors::InvalidDocumentError, "Title and content cannot be blank" if title.blank? || content.blank?
+  def validate_document!(content)
+    raise AIAssistant::Errors::InvalidDocumentError, "Content cannot be blank" if content.blank?
   end
 
-  def generate_embedding(text)
-    response = OpenAI::Client.new(
-      access_token: ENV.fetch("OPENAI_API_KEY", nil),
-      uri_base: "https://api.openai.com",
-      request_timeout: 240
-    ).embeddings(
-      parameters: {
-        model: @embedding_model,
-        input: text
-      }
-    )
-    response.dig("data", 0, "embedding")
+  def generate_embedding(content)
+    embedding_service = EmbeddingService.new(content)
+
+    embedding_service.call
   rescue StandardError => e
     raise AIAssistant::Errors::EmbeddingGenerationError, "Failed to generate embedding: #{e.message}"
   end
 
   def find_relevant_documents(embedding, max_docs)
-    Document.nearest_neighbors(
+    Chunk.nearest_neighbors(
       :embedding,
       embedding,
       distance: DEFAULT_SIMILARITY_METRIC
@@ -87,7 +80,7 @@ class RagService
 
   def build_context(documents)
     documents.map do |doc|
-      "#{doc.title}:\n#{doc.content}"
+      "#{doc.content}"
     end.join("\n\n")
   end
 
@@ -111,7 +104,7 @@ class RagService
     {
       question: question,
       answer: answer,
-      sources: sources.map(&:title),
+      sources: "#{sources.map(&:chunk_index).join(", ")} - Temporary sources",
       persona: @persona.name
     }
   end
