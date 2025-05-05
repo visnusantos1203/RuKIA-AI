@@ -40,7 +40,7 @@ gem "neighbor"
 gem "ruby-openai"
 gem "tiktoken_ruby"
 gem 'pdf-reader', '~> 2.14', '>= 2.14.1'
-gem 'docx', '~> 0.8.0'
+gem 'docx', '~> 0.9.1'
 
 
 gem 'sidekiq', '~> 7.0'
