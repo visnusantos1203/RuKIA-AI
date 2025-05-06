@@ -2,27 +2,62 @@
 
 class SemanticChunkingService
   ## TODO: Find a better implementation for this. Leverage NLP if possible
+
+  MAX_CHUNK_SIZE = 1000
+  OVERLAP_SIZE = 100
+
   def chunk_text(text)
-    paragraphs = text.split(/\n\n+/).compact.map(&:strip).reject(&:empty?)
+    # Split into logical sections (paragraphs, headers, lists)
+    sections = extract_sections(text)
     chunks = []
+    current_chunk = ""
+    current_chunk_sections = []
 
-    paragraphs.each_with_index do |paragraph, i|
-      context = i > 0 ? paragraphs[i-1].to_s[-100..].to_s : ""
-      context += i < paragraphs.length - 1 ? paragraphs[i+1].to_s[0..100].to_s : ""
+    sections.each do |section|
+      # If adding this section would exceed MAX_CHUNK_SIZE, finalize current chunk
+      if (current_chunk + section).length > MAX_CHUNK_SIZE && !current_chunk.empty?
+        # Create chunk with its content and metadata
+        chunks << create_chunk(current_chunk, current_chunk_sections)
 
-      chunks << { content: paragraph, context: context }
+        # Start new chunk with overlap from previous chunk
+        overlap = current_chunk[-OVERLAP_SIZE..]
+        current_chunk = overlap + section
+        current_chunk_sections = [ current_chunk_sections.last, section ]
+      else
+        # Add section to current chunk
+        current_chunk += section
+        current_chunk_sections << section
+      end
     end
 
+    # Add the last chunk if not empty
+    chunks << create_chunk(current_chunk, current_chunk_sections) unless current_chunk.empty?
     chunks
   end
 
   private
 
-  def get_context_from_prev_paragraph(paragraph, i)
-    i > 0 ? paragraphs[i-1].to_s[-100..].to_s : ""
+  def extract_sections(text)
+    sections = []
+
+    # Handle headers, lists, paragraphs as separate sections
+    text.split(/(?=^#)|(?=^\s*\d+\.)|(?=^\s*\*)|(?=^\s*-)|(?=\n\n)/).each do |section|
+      sections << section.strip
+    end
+
+    sections.reject(&:empty?)
   end
 
-  def get_context_from_next_paragraph(paragraph, i)
-    i < paragraphs.length - 1 ? paragraphs[i+1].to_s[0..100].to_s : ""
+  def create_chunk(content, sections)
+    normalize = ->(text) { text&.gsub(/\s+/, " ") }
+
+    {
+      content: normalize.call(content),
+      context: {
+        preceding_content: normalize.call(sections.first),
+        following_content: normalize.call(sections.last),
+        section_count: sections.length || 0
+      }
+    }
   end
 end
