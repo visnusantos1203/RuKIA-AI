@@ -3,7 +3,8 @@
 module Api
   module V1
     class ChatsController < ApplicationController
-      skip_before_action :verify_authenticity_token, only: [ :chat ]
+      before_action :authenticate_user!, only: [ :chat ]
+
       def index
         # This will render the chat interface
       end

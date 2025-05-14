@@ -28,4 +28,4 @@ module AIAssistant
       end
     end
   end
-end 
+end

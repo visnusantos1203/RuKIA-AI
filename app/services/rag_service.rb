@@ -104,7 +104,8 @@ class RagService
     {
       question: question,
       answer: answer,
-      sources: "#{sources.map(&:chunk_index).join(", ")} - Temporary sources",
+      sources: "#{sources.first.document.name} - Temporary source",
+      # sources: "#{sources.map(&:chunk_index).join(", ")} - Temporary sources",
       persona: @persona.name
     }
   end
