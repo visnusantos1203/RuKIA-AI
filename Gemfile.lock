@@ -77,10 +77,10 @@ GEM
       public_suffix (>= 2.0.2, < 7.0)
     afm (0.2.2)
     ast (2.4.2)
-    base64 (0.2.0)
+    base64 (0.3.0)
     bcrypt (3.1.20)
     benchmark (0.4.0)
-    bigdecimal (3.1.9)
+    bigdecimal (3.2.2)
     bindex (0.8.1)
     bootsnap (1.18.4)
       msgpack (~> 1.2)
@@ -147,7 +147,7 @@ GEM
       dry-logic (~> 1.5)
       dry-types (~> 1.8)
       zeitwerk (~> 2.6)
-    dry-types (1.8.2)
+    dry-types (1.8.3)
       bigdecimal (~> 3.0)
       concurrent-ruby (~> 1.0)
       dry-core (~> 1.0)
@@ -170,7 +170,8 @@ GEM
       multipart-post (~> 2.0)
     faraday-net_http (3.4.0)
       net-http (>= 0.5.0)
-    fast-mcp (1.4.0)
+    fast-mcp (1.5.0)
+      addressable (~> 2.8)
       base64
       dry-schema (~> 1.14)
       json (~> 2.0)
@@ -193,7 +194,7 @@ GEM
     jbuilder (2.13.0)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
-    json (2.10.1)
+    json (2.12.2)
     jwt (2.10.1)
       base64
     language_server-protocol (3.17.0.4)
@@ -212,7 +213,7 @@ GEM
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2025.0514)
+    mime-types-data (3.2025.0617)
     mini_mime (1.1.5)
     minitest (5.25.4)
     msgpack (1.8.0)
@@ -262,7 +263,7 @@ GEM
     puma (6.6.0)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (3.1.10)
+    rack (3.1.16)
     rack-cors (2.0.2)
       rack (>= 2.0.0)
     rack-session (2.1.0)
@@ -451,7 +452,7 @@ DEPENDENCIES
   dotenv-rails
   error_highlight (>= 0.4.0)
   factory_bot_rails
-  fast-mcp (~> 1.4)
+  fast-mcp (~> 1.5)
   importmap-rails
   jbuilder
   neighbor

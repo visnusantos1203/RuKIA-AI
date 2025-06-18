@@ -79,4 +79,4 @@ end
 
 gem "byebug", "~> 12.0", groups: [ :development, :test ]
 
-gem "fast-mcp", "~> 1.4"
+gem "fast-mcp", "~> 1.5"
