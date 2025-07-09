@@ -29,7 +29,7 @@ module Api
 
       def process_chat_request(question, persona)
         rag_service = RagService.new(persona: persona)
-        response = rag_service.query(question)
+        response = rag_service.call(question)
 
         respond_to do |format|
           format.json { render json: response }
