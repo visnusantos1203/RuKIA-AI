@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class EmbeddingService
+  DEFAULT_EMBEDDING_MODEL = "text-embedding-ada-002"
+
   def initialize(content)
     @content = content
   end
@@ -15,7 +17,7 @@ class EmbeddingService
     client = Llm::OpenAI::Client.new
     response = client.embeddings(
       parameters: {
-        model: "text-embedding-ada-002",
+        model: DEFAULT_EMBEDDING_MODEL,
         input: @content
       }
     )
