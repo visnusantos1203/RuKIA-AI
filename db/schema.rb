@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_05_08_044916) do
+ActiveRecord::Schema[7.2].define(version: 2025_07_10_044702) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "vector"
@@ -64,6 +64,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_05_08_044916) do
     t.integer "token_count"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_documents_on_user_id"
+  end
 
   create_table "llm_responses", force: :cascade do |t|
     t.bigint "message_id", null: false
@@ -103,4 +106,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_05_08_044916) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "chunks", "documents"
+  add_foreign_key "documents", "users"
+  add_foreign_key "llm_responses", "messages"
+  add_foreign_key "messages", "documents"
 end

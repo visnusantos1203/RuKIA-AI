@@ -3,8 +3,11 @@
 class Document < ApplicationRecord
   include Embeddable
 
+  belongs_to :user
+
   has_one_attached :file
   has_many :chunks, dependent: :destroy
+  has_many :messages, dependent: :destroy
 
   enum status: {
     uploaded: 0,
@@ -42,7 +45,7 @@ class Document < ApplicationRecord
       next if content.empty?
 
       Rails.logger.info "Chunk data: #{content}"
-
+      # Placeholder for actual token count logic
       chunk_data_params = {
         content: content,
         chunk_index: index,
