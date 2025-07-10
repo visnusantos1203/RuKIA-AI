@@ -64,6 +64,15 @@ ActiveRecord::Schema[7.2].define(version: 2025_05_08_044916) do
     t.integer "token_count"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+
+  create_table "messages", force: :cascade do |t|
+    t.bigint "document_id", null: false
+    t.string "body", null: false
+    t.vector "embedding", limit: 1536, null: false
+    t.integer "token_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["document_id"], name: "index_messages_on_document_id"
   end
 
   create_table "users", force: :cascade do |t|
