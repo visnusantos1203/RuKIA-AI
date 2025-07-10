@@ -4,8 +4,9 @@ class DocumentRetrieverService
   DEFAULT_MAX_CONTEXT_DOCS = 50
   DEFAULT_SIMILARITY_METRIC = "cosine"
 
-  def initialize(question_embedding)
+  def initialize(question_embedding, document)
     @question_embedding = question_embedding
+    @document = document
   end
 
   def call
@@ -15,7 +16,7 @@ class DocumentRetrieverService
   private
 
   def find_relevant_documents(embedding, max_docs)
-    Chunk.nearest_neighbors(
+    @document.chunks.nearest_neighbors(
       :embedding,
       embedding,
       distance: DEFAULT_SIMILARITY_METRIC

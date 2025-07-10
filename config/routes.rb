@@ -21,7 +21,7 @@ Rails.application.routes.draw do
       post "chat", to: "chats#chat"
 
       # Document routes
-      resources :documents
+      resources :documents, only: [ :index, :create, :destroy ]
     end
   end
 end

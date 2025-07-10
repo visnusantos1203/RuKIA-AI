@@ -1,17 +1,20 @@
 # frozen_string_literal: true
 
 class RagService
+  # byebug
   DEFAULT_MODEL = "gpt-3.5-turbo"
   DEFAULT_PERSONA = :professional
 
   def initialize(
     client: Llm::OpenAI::Client.new,
     model: DEFAULT_MODEL,
-    persona: DEFAULT_PERSONA
+    persona: DEFAULT_PERSONA,
+    document: nil
   )
     @client = client
     @model = model
     @persona = AIAssistant::PersonaRegistry.find(persona)
+    @document = document
   end
 
   def call(user_question)
@@ -20,6 +23,10 @@ class RagService
     retrieve_documents
 
     generate_response(user_question)
+  rescue AIAssistant::Errors::EmbeddingError => e
+    raise e
+  rescue AIAssistant::Errors::ResponseRecordingError => e
+    raise e
   end
 
   private
@@ -41,7 +48,9 @@ class RagService
   end
 
   def retrieve_documents
-    document_retriever = DocumentRetrieverService.new(@question_embedding)
+    document_retriever = DocumentRetrieverService.new(
+      @question_embedding,
+      @document)
 
     @documents ||= document_retriever.call
   end

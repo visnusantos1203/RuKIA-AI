@@ -5,6 +5,10 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: self
 
+  has_many :documents, dependent: :destroy
+  has_many :messages, through: :documents
+  has_many :llm_responses, through: :messages
+
   def jwt_payload
     super
   end

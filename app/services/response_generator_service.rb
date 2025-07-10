@@ -41,7 +41,7 @@ class ResponseGeneratorService
     {
       question: question,
       answer: answer,
-      sources: "#{sources.first.document.name}",
+      source: "#{sources.first.document.name}",
       persona: @persona.name
     }
   end
