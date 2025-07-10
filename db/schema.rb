@@ -65,6 +65,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_05_08_044916) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
 
+  create_table "llm_responses", force: :cascade do |t|
+    t.bigint "message_id", null: false
+    t.string "body", null: false
+    t.integer "token_count"
+    t.string "persona"
+    t.string "source"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["message_id"], name: "index_llm_responses_on_message_id"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.bigint "document_id", null: false
     t.string "body", null: false
