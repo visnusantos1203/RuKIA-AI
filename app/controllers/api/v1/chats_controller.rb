@@ -68,7 +68,7 @@ module Api
       end
 
       def process_retrieval_and_generation
-        rag_service = RagService.new(persona: persona, document: document)
+        rag_service = RagService.new(persona: persona, document: document, user: current_user)
 
         rag_service.call(question)
       end
