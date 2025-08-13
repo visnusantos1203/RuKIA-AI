@@ -8,6 +8,7 @@ class Document < ApplicationRecord
   has_one_attached :file
   has_many :chunks, dependent: :destroy
   has_many :messages, dependent: :destroy
+  has_many :llm_responses, through: :messages, dependent: :destroy
 
   enum status: {
     uploaded: 0,

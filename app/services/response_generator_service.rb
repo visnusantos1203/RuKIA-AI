@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class ResponseGeneratorService
-  def initialize(client, model, persona)
+  def initialize(client, model, persona, document)
     @client = client
     @model = model
     @persona = persona
+    @document = document
   end
 
   def call(question, documents)
@@ -26,14 +27,17 @@ class ResponseGeneratorService
       #{@persona.system_prompt}
 
       Use the following context to answer the question based on the given persona.
-      If you cannot answer the question based on the context, say so.
-
-      Never mention the word "based on the context provided" or anything similar to this phrase in your response.
 
       Context:
       #{context}
 
       Question: #{question}
+
+      If you cannot answer the question based on the context, say so and ask if the user has any other questions.
+      Never mention the word "based on the context provided" or anything similar to this phrase in your response.
+
+      Below is a part of the chat history that may help you answer the question:
+      #{chat_history}
     PROMPT
   end
 
@@ -55,5 +59,9 @@ class ResponseGeneratorService
     @client.query(@model, prompt)
   rescue StandardError => e
     raise AIAssistant::Errors::QueryProcessingError, "Failed to generate response: #{e.message}"
+  end
+
+  def chat_history
+    @chat_history ||= ChatHistoryRetrieverService.new(@document).call
   end
 end

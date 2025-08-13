@@ -9,12 +9,14 @@ class RagService
     client: Llm::OpenAI::Client.new,
     model: DEFAULT_MODEL,
     persona: DEFAULT_PERSONA,
-    document: nil
+    document: nil,
+    user: nil
   )
     @client = client
     @model = model
     @persona = AIAssistant::PersonaRegistry.find(persona)
     @document = document
+    @user = user
   end
 
   def call(user_question)
@@ -41,7 +43,8 @@ class RagService
     response_generator = ResponseGeneratorService.new(
                           @client,
                           @model,
-                          @persona
+                          @persona,
+                          @document
                         )
 
     response_generator.call(question, @documents)
