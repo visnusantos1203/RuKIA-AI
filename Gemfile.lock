@@ -80,7 +80,7 @@ GEM
     base64 (0.2.0)
     bcrypt (3.1.20)
     benchmark (0.4.0)
-    bigdecimal (3.1.9)
+    bigdecimal (3.2.2)
     bindex (0.8.1)
     bootsnap (1.18.4)
       msgpack (~> 1.2)
@@ -244,9 +244,9 @@ GEM
     parser (3.3.7.1)
       ast (~> 2.4.1)
       racc
-    pdf-reader (2.14.1)
+    pdf-reader (2.15.0)
       Ascii85 (>= 1.0, < 3.0, != 2.0.0)
-      afm (~> 0.2.1)
+      afm (>= 0.2.1, < 2)
       hashery (~> 2.0)
       ruby-rc4
       ttfunk
@@ -455,7 +455,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   neighbor
-  pdf-reader (~> 2.14, >= 2.14.1)
+  pdf-reader (~> 2.15)
   pg (~> 1.1)
   pgvector
   puma (>= 5.0)
